@@ -1,5 +1,7 @@
-const { where } = require('sequelize');
 const { User } = require('../models');
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const validator = require('validator');
 
 const getAllUsers = async (_req, res) => {
@@ -21,14 +23,43 @@ const createUser = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ error: "e-mail já cadastrado" })
         }
-        const newUser = await User.create({ name, email, password });
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = await User.create({ name, email, password: hashedPassword });
         res.status(201).json({ message: `Seja bem vindo ${name}` });
     } catch (error) {
         res.status(500).json({ error: "Erro ao criar usuário" })
     }
 }
 
+const loginUser = async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email e senha são obrigatórios!" })
+    }
+
+    try {
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado" });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Senha inválida" });
+        }
+
+        const token = jwt.sign({ id: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: '1h' })
+
+        res.status(200).json({ token });
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao fazer login" });
+    }
+}
+
 module.exports = {
     getAllUsers,
-    createUser
+    createUser,
+    loginUser
 }
