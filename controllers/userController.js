@@ -3,6 +3,15 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    // auth: {
+    //     user: ,
+    //     pass:
+    // }
+})
 
 const getAllUsers = async (_req, res) => {
     const users = await User.findAll();
