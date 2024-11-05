@@ -7,11 +7,28 @@ const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
-    // auth: {
-    //     user: ,
-    //     pass:
-    // }
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
 })
+
+const sendEmail = (to, subject, text, res) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER, //remetente
+        to: to, //destinatário
+        subject,
+        text
+    }
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if(error) {
+            return res.status(500).json({ error: "Falha no envio do e-mail!" });
+        } else {
+            return res.status(200).json({ message: "Usuário criado com sucesso!" })
+        }
+    })
+}
 
 const getAllUsers = async (_req, res) => {
     const users = await User.findAll();
@@ -36,6 +53,7 @@ const createUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await User.create({ name, email, password: hashedPassword });
+        sendEmail(email, 'Bem vindo à geração tech', `Olá ${name}, sua conta foi criada com sucesso!`, res)
         res.status(201).json({ message: `Seja bem vindo ${name}` });
     } catch (error) {
         res.status(500).json({ error: "Erro ao criar usuário" })
