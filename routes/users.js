@@ -1,6 +1,7 @@
 const userController = require("../controllers/userController");
 var express = require("express");
 const authenticateToken = require("../middleware/authenticateToken");
+const user = require("../models/user");
 var router = express.Router();
 
 /**
@@ -49,5 +50,7 @@ router.get("/:id", authenticateToken, userController.getUserWithAddress);
 
 router.post("/", userController.createUser);
 router.post("/login", userController.loginUser);
+
+router.put('/:id', userController.deleteUser);
 
 module.exports = router;

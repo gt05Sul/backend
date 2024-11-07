@@ -4,6 +4,9 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const validator = require('validator');
 const nodemailer = require('nodemailer');
+const { where } = require('sequelize');
+const { restart } = require('nodemon');
+const user = require('../models/user');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -31,8 +34,16 @@ const sendEmail = (to, subject, text, res) => {
 }
 
 const getAllUsers = async (_req, res) => {
-    const users = await User.findAll();
-    res.json(users);
+    try {
+        const users = await User.findAll({
+            where: {
+                active: true
+            }
+        });
+        return res.status(200).json(users);
+    } catch (error) {
+        return res.status(500).json({ error: "Falha ao buscar usuário" })
+    }
 }
 
 const createUser = async (req, res) => {
@@ -99,9 +110,33 @@ const getUserWithAddress = async (req, res) => {
     }
 }
 
+const deleteUser = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.status(404).json({ error: "Usuário não encontrado!" })
+        }
+
+        const updateUser = await User.update(
+            { active: false },
+            { where: {id} }
+        );
+        if (updateUser[0] === 0) {
+            return res.status(400).json({ error: "Falha ao excluir usuário" })
+        }
+
+        return res.status(200).json({ message: "Usuário excluído com sucesso!" })
+    } catch (error) {
+        return res.status(500).json({ error: "Falha ao excluir usuário" })
+    }
+}
+
 module.exports = {
     getAllUsers,
     createUser,
     loginUser,
-    getUserWithAddress
+    getUserWithAddress,
+    deleteUser
 }
