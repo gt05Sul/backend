@@ -8,8 +8,15 @@ const swaggerDocs = require('./config/swagger');
 
 var usersRouter = require('./routes/users');
 var addressRouter = require('./routes/address');
+const cors = require('cors');
 
 var app = express();
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true // permite o envio de cookies se necessário
+}))
 
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));

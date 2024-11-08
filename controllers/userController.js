@@ -114,7 +114,12 @@ const loginUser = async (req, res) => {
 };
 
 const getUserWithAddresses = async (req, res) => {
-    try {
+    try 
+    {
+        if(req.user.id !== parseInt(req.params.id, 10)) {
+            return res.status(403).json({ error: "Acesso não autorizado!" })
+        }
+
         const user = await User.findByPk(req.params.id, {
             include: [{ model: Address, as: 'addresses' }]
         });
