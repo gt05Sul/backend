@@ -47,6 +47,26 @@ router.get('/', userController.getAllUsers);
  *   post:
  *     summary: Cria um novo usuário
  *     tags: [Usuários]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nome do usuário
+ *                 example: João Silva
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Email do usuário
+ *                 example: usuario@example.com
+ *               password:
+ *                 type: string
+ *                 description: Senha do usuário
+ *                 example: senha123
  *     responses:
  *       201:
  *         description: Usuário criado com sucesso
