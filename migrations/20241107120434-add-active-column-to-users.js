@@ -9,11 +9,14 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.addColumn('Users', 'active', {
-      type: Sequelize.BOOLEAN,
-      defaultValue: true,
-      allowNull: false
-    })
+    const tableDescription = await queryInterface.describeTable('Users');
+    if(!tableDescription.active) {
+      await queryInterface.addColumn('Users', 'active', {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
+        allowNull: false
+      });
+    }
   },
 
   async down (queryInterface, Sequelize) {
@@ -23,5 +26,9 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
+    const tableDescription = await queryInterface.describeTable('Users');
+    if(tableDescription.active) {
+      await queryInterface.removeColumn('Users', 'active');
+    }
   }
 };
