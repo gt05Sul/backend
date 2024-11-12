@@ -8,6 +8,10 @@ const swaggerDocs = require('./config/swagger');
 
 var usersRouter = require('./routes/users');
 var addressRouter = require('./routes/address');
+var categoryRouter = require('./routes/category');
+var productRouter = require('./routes/product');
+var cartRouter = require('./routes/cart');
+
 const cors = require('cors');
 
 var app = express();
@@ -31,6 +35,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use('/users', usersRouter);
 app.use('/address', addressRouter);
+app.use('/categories',categoryRouter);
+app.use('/products', productRouter);
+app.use('/cart', cartRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
