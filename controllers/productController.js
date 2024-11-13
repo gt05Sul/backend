@@ -13,14 +13,14 @@ const getAllProducts = async (req, res) => {
 
 // Método para criar um produto
 const createProduct = async (req, res) => {
-    const { name, price } = req.body;
+    const { name, price, categoryId } = req.body;
 
-    if (!name || !price) {
+    if (!name || !price || !categoryId) {
         return res.status(400).json({ error: "Nome e preço são obrigatórios." });
     }
 
     try {
-        const newProduct = await Product.create({ name, price });
+        const newProduct = await Product.create({ name, price, categoryId });
         return res.status(201).json(newProduct);
     } catch (error) {
         console.error('Erro ao criar produto:', error);

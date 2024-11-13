@@ -4,7 +4,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /product:
+ * /products:
  *   post:
  *     summary: Cria um novo produto
  *     tags: [Produtos]
