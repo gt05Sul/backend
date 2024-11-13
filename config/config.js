@@ -8,5 +8,10 @@ module.exports = {
         host: process.env.DB_HOST,
         dialect: process.env.DB_DIALECT,
         port: process.env.DB_PORT
+    },
+    test:{
+        dialect: 'sqlite',
+        storage: ':memory',
+        logging: false
     }
 }
